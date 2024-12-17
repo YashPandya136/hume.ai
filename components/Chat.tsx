@@ -18,7 +18,7 @@ export default function ClientComponent({
   const getConfigId = () => {
     return selectedCharacter === "arthur"
       ? "6eb190cd-d88a-4ce8-b87f-ec3da5db4f98"
-      : "e8d1b4e2-a793-4f21-b67d-df02c3c35a88";
+      : "fcff0079-d758-4cae-bf21-3d4e59b819f8";
   };
 
   return (
