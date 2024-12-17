@@ -3,8 +3,8 @@
 import { VoiceProvider } from "@humeai/voice-react";
 import Messages from "./Messages";
 import Controls from "./Controls";
-import StartCall from "./StartCall";
-import { ComponentRef, useRef } from "react";
+import StartCall, { Character } from "./StartCall";
+import { ComponentRef, useRef, useState } from "react";
 
 export default function ClientComponent({
   accessToken,
@@ -13,6 +13,13 @@ export default function ClientComponent({
 }) {
   const timeout = useRef<number | null>(null);
   const ref = useRef<ComponentRef<typeof Messages> | null>(null);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character>(null);
+
+  const getConfigId = () => {
+    return selectedCharacter === "arthur"
+      ? "6eb190cd-d88a-4ce8-b87f-ec3da5db4f98"
+      : "e8d1b4e2-a793-4f21-b67d-df02c3c35a88";
+  };
 
   return (
     <div
@@ -21,7 +28,7 @@ export default function ClientComponent({
       }
     >
       <VoiceProvider
-        configId="6eb190cd-d88a-4ce8-b87f-ec3da5db4f98"
+        configId={getConfigId()}
         auth={{ type: "accessToken", value: accessToken }}
         onMessage={() => {
           if (timeout.current) {
@@ -42,7 +49,7 @@ export default function ClientComponent({
       >
         <Messages ref={ref} />
         <Controls />
-        <StartCall />
+        <StartCall onCharacterSelect={setSelectedCharacter} />
       </VoiceProvider>
     </div>
   );
