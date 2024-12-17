@@ -2,15 +2,38 @@ import { useVoice } from "@humeai/voice-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "./ui/button";
 import { Phone } from "lucide-react";
+import { useState } from "react";
 
-export default function StartCall() {
+export type Character = "arthur" | "elizabeth" | null;
+
+export default function StartCall({ 
+  onCharacterSelect 
+}: { 
+  onCharacterSelect: (character: Character) => void 
+}) {
   const { status, connect } = useVoice();
+  const [selectedCharacter, setSelectedCharacter] = useState<Character>(null);
+
+  const handleCharacterSelect = (character: Character) => {
+    setSelectedCharacter(character);
+    onCharacterSelect(character);
+  };
+
+  const handleConnect = async () => {
+    try {
+      await connect();
+    } catch (error) {
+      console.error("Failed to connect:", error);
+    }
+  };
 
   return (
     <AnimatePresence>
       {status.value !== "connected" ? (
         <motion.div
-          className={"fixed inset-0 p-4 flex items-center justify-center bg-background"}
+          className={
+            "fixed inset-0 p-4 flex flex-col items-center justify-center bg-background"
+          }
           initial="initial"
           animate="enter"
           exit="exit"
@@ -20,6 +43,22 @@ export default function StartCall() {
             exit: { opacity: 0 },
           }}
         >
+          <div className="flex gap-4 mb-4">
+            <Button
+              variant={selectedCharacter === "arthur" ? "default" : "outline"}
+              onClick={() => handleCharacterSelect("arthur")}
+            >
+              Arthur
+            </Button>
+            <Button
+              variant={
+                selectedCharacter === "elizabeth" ? "default" : "outline"
+              }
+              onClick={() => handleCharacterSelect("elizabeth")}
+            >
+              Elizabeth
+            </Button>
+          </div>
           <AnimatePresence>
             <motion.div
               variants={{
@@ -30,12 +69,8 @@ export default function StartCall() {
             >
               <Button
                 className={"z-50 flex items-center gap-1.5"}
-                onClick={() => {
-                  connect()
-                    .then(() => {})
-                    .catch(() => {})
-                    .finally(() => {});
-                }}
+                onClick={handleConnect}
+                disabled={!selectedCharacter}
               >
                 <span>
                   <Phone
